@@ -1,0 +1,43 @@
+# Explicitly excluded source material
+180panel-example/
+
+# macOS and editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/npm-debug.log*
+*.tsbuildinfo
+
+# Generated analysis and runtime data
+test-output/
+jobs/
+docker-input/
+docker-output/
+*.log
+
+# Local database and coverage artifacts
+*.sqlite
+*.sqlite3
+.coverage
+htmlcov/

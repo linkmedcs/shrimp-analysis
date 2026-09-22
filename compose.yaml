@@ -1,0 +1,105 @@
+name: shrimp-analysis
+
+x-backend-environment: &backend-environment
+  SHRIMP_DATABASE_URL: postgresql+psycopg://shrimp:shrimp@postgres:5432/shrimp
+  SHRIMP_REDIS_URL: redis://redis:6379/0
+  SHRIMP_QUEUE_NAME: identification
+  SHRIMP_JOBS_ROOT: /data/jobs
+  SHRIMP_UPLOADS_ROOT: /data/uploads
+  SHRIMP_REFERENCE_MANIFEST: /app/reference-data/panel-v1/manifest.json
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: shrimp
+      POSTGRES_USER: shrimp
+      POSTGRES_PASSWORD: shrimp
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shrimp -d shrimp"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:8-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - redis-data:/data
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    image: shrimp-api:0.3.0
+    entrypoint: ["alembic"]
+    command: ["upgrade", "head"]
+    environment: *backend-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    image: shrimp-api:0.3.0
+    environment: *backend-environment
+    ports:
+      - "8000:8000"
+    volumes:
+      - jobs-data:/data/jobs
+      - uploads-data:/data/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    image: shrimp-worker:0.3.0
+    environment: *backend-environment
+    volumes:
+      - jobs-data:/data/jobs
+      - uploads-data:/data/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        API_PROXY_URL: http://api:8000
+    image: shrimp-web:0.1.0
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
+  jobs-data:
+  uploads-data:

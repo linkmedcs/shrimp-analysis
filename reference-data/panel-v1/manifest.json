@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "reference_version": "panel-v1",
+  "lifecycle_status": "frozen",
+  "created_at": "2026-09-22",
+  "frozen_at": "2026-09-22",
+  "species": {
+    "common_name": "凡纳滨对虾",
+    "scientific_name": "Litopenaeus vannamei"
+  },
+  "panel": {
+    "declared_name": "180panel",
+    "marker_policy": "all_current_markers",
+    "marker_count": 503,
+    "status": "frozen",
+    "note": "panel-v1 冻结使用当前 BIM 文件中的全部 503 个位点；180panel 仅保留为历史项目名称。"
+  },
+  "samples": {
+    "genotype_sample_count": 673,
+    "metadata_record_count": 713,
+    "metadata_blank_label_count": 30,
+    "labelled_reference_count": 650,
+    "unknown_query_count": 23,
+    "label_class_count": 23
+  },
+  "plink": {
+    "conda_package_version": "1.90b7.7",
+    "binary_version": "PLINK v1.9.0-b.8 64-bit (22 Oct 2024)",
+    "docker_debian_package_version": "1.90~b7.7-241022-2",
+    "docker_binary_version": "PLINK v1.9.0-b.7.7 64-bit (22 Oct 2024)",
+    "autosome_count": 45,
+    "allow_extra_chr": true,
+    "distance": "square ibs"
+  },
+  "algorithm_defaults": {
+    "name": "weighted-knn",
+    "version": "0.1.0",
+    "k": 5,
+    "min_known_neighbors": 3,
+    "epsilon": 0.000001,
+    "weight_power": 1.0
+  },
+  "runtime_validation": {
+    "validated_at": "2026-09-22",
+    "platforms": [
+      "linux/arm64",
+      "linux/amd64"
+    ],
+    "result_comparison": "identical_csv_rows",
+    "loo_accuracy": 0.8307692307692308
+  },
+  "metadata_normalization": {
+    "format": "strict_two_column_tsv",
+    "columns": [
+      "ID",
+      "POP"
+    ],
+    "line_ending": "LF",
+    "source_file": "metadata/labels.raw.tsv",
+    "normalized_file": "metadata/labels.tsv",
+    "script": "scripts/normalize_reference_metadata.py",
+    "blank_labels_are_unknown": true
+  },
+  "files": [
+    {
+      "role": "bed",
+      "path": "genotype/reference.bed",
+      "sha256": "530d938e737556a976f0333a63ee5f7bb83c7634642705137cdeb2eff0d89d4a",
+      "read_only": true
+    },
+    {
+      "role": "bim",
+      "path": "genotype/reference.bim",
+      "sha256": "2591659608da99bd56636d5691ba6709569c593425d89852e72105869e3fdf5d",
+      "read_only": true
+    },
+    {
+      "role": "fam",
+      "path": "genotype/reference.fam",
+      "sha256": "a8c3418fef4733ca6d60c1c5229c4139f02f79481b888ded4a56ea0128be9541",
+      "read_only": true
+    },
+    {
+      "role": "metadata",
+      "path": "metadata/labels.tsv",
+      "sha256": "f40f9001708f4c4dbf31aa90f11b705f4f1cf8e6c619a2cc5bfa8957a27841d7",
+      "read_only": true
+    },
+    {
+      "role": "metadata_raw",
+      "path": "metadata/labels.raw.tsv",
+      "sha256": "d44dc091f8c5c8c1948df323620c76047ce9721099b9c871953fd1bdb74af1b4",
+      "read_only": true
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weighted-knn-genotype"
+version = "0.3.0"
+description = "IBS distance-weighted KNN for shrimp germplasm identification"
+requires-python = ">=3.9"
+dependencies = [
+  "numpy>=1.26,<3",
+  "pandas>=2,<3",
+]
+
+[project.optional-dependencies]
+backend = [
+  "alembic>=1.13,<2",
+  "fastapi>=0.115,<1",
+  "psycopg[binary]>=3.2,<4",
+  "pydantic-settings>=2.5,<3",
+  "python-multipart>=0.0.12,<1",
+  "redis>=5,<7",
+  "rq>=2,<4",
+  "sqlalchemy>=2,<3",
+  "uvicorn[standard]>=0.30,<1",
+]
+test = [
+  "pytest>=8,<10",
+]
+
+[project.scripts]
+weighted-knn-genotype = "weighted_knn_genotype.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["weighted_knn_genotype*", "backend*"]
