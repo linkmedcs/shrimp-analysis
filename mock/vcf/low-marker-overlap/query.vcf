@@ -1,0 +1,85 @@
+##fileformat=VCFv4.2
+##fileDate=20260923
+##source=PLINKv1.9
+##contig=<ID=1,length=45371563>
+##contig=<ID=2,length=30451566>
+##contig=<ID=3,length=40318683>
+##contig=<ID=4,length=37382418>
+##contig=<ID=5,length=37013424>
+##contig=<ID=7,length=13124370>
+##contig=<ID=9,length=27698393>
+##contig=<ID=10,length=28847290>
+##contig=<ID=11,length=26483134>
+##contig=<ID=12,length=3003220>
+##contig=<ID=13,length=6982768>
+##contig=<ID=14,length=28856352>
+##contig=<ID=15,length=28207223>
+##contig=<ID=16,length=29145466>
+##contig=<ID=17,length=23943325>
+##contig=<ID=18,length=32872129>
+##contig=<ID=19,length=15815943>
+##contig=<ID=20,length=28127132>
+##contig=<ID=21,length=3165635>
+##contig=<ID=22,length=30157320>
+##contig=<ID=23,length=28262831>
+##contig=<ID=24,length=19195116>
+##contig=<ID=27,length=19026215>
+##contig=<ID=28,length=11198947>
+##contig=<ID=30,length=25843933>
+##contig=<ID=31,length=4775046>
+##contig=<ID=32,length=22018493>
+##contig=<ID=33,length=18961845>
+##contig=<ID=34,length=12047132>
+##contig=<ID=35,length=12585783>
+##contig=<ID=36,length=10554513>
+##contig=<ID=37,length=1137183>
+##contig=<ID=38,length=2004752>
+##contig=<ID=39,length=15300367>
+##contig=<ID=40,length=18280284>
+##contig=<ID=41,length=6872502>
+##contig=<ID=42,length=5584670>
+##contig=<ID=43,length=1196679>
+##contig=<ID=44,length=6798814>
+##contig=<ID=Scaffold00151,length=46620>
+##contig=<ID=Scaffold00197,length=78079>
+##contig=<ID=Scaffold00472,length=61139>
+##contig=<ID=Scaffold00498,length=23160>
+##contig=<ID=Scaffold00527,length=74949>
+##contig=<ID=Scaffold00550,length=14003>
+##contig=<ID=Scaffold00599,length=15271>
+##contig=<ID=Scaffold00600,length=6961>
+##contig=<ID=Scaffold00604,length=31824>
+##contig=<ID=Scaffold00899,length=21511>
+##contig=<ID=Scaffold00989,length=51155>
+##contig=<ID=Scaffold01004,length=7377>
+##contig=<ID=Scaffold01409,length=4589>
+##contig=<ID=Scaffold01412,length=2601>
+##contig=<ID=Scaffold01448,length=41272>
+##contig=<ID=Scaffold01488,length=34088>
+##contig=<ID=Scaffold01500,length=22591>
+##contig=<ID=Scaffold01879,length=13143>
+##contig=<ID=Scaffold02241,length=4251>
+##contig=<ID=Scaffold02425,length=17013>
+##contig=<ID=Scaffold02688,length=15176>
+##contig=<ID=Scaffold02883,length=16979>
+##contig=<ID=Scaffold03377,length=4050>
+##contig=<ID=Scaffold03425,length=11518>
+##contig=<ID=Scaffold04388,length=21963>
+##contig=<ID=Scaffold04941,length=5880>
+##contig=<ID=Scaffold05080,length=17112>
+##contig=<ID=Scaffold05232,length=24686>
+##contig=<ID=Scaffold06079,length=15933>
+##contig=<ID=Scaffold06311,length=14440>
+##INFO=<ID=PR,Number=0,Type=Flag,Description="Provisional reference allele, may not be based on real reference genome">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	Q_GT	Q_ZD	Q_KONA
+1	11687793	1:11687793	G	A	.	.	PR	GT	0/0	0/1	0/1
+1	11687825	1:11687825	A	G	.	.	PR	GT	0/0	0/0	0/0
+1	14247501	1:14247501	A	G	.	.	PR	GT	0/0	0/0	0/0
+1	14247528	1:14247528	G	A	.	.	PR	GT	0/0	0/0	0/1
+1	23701391	1:23701391	C	T	.	.	PR	GT	0/0	0/0	0/0
+1	45371401	1:45371401	A	G	.	.	PR	GT	0/1	0/0	0/1
+1	45371414	1:45371414	A	T	.	.	PR	GT	0/1	0/1	0/0
+1	45371434	1:45371434	T	C	.	.	PR	GT	0/0	0/0	0/0
+1	45371438	1:45371438	G	A	.	.	PR	GT	0/0	0/0	0/0
+1	45371483	1:45371483	C	T	.	.	PR	GT	0/0	0/0	0/0

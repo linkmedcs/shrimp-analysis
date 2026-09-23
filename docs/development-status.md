@@ -62,6 +62,8 @@ test-output/stage3-final-amd64
 - 独立 `shrimp-web:0.1.0` 生产镜像并接入 Docker Compose。
 - TypeScript 检查和 Next.js 生产构建通过。
 - 浏览器验证首页、参考库数据、任务结果页和下载链接，控制台无错误。
+- 支持 PLINK 三文件和 VCF/VCF.GZ 单文件上传；两者统一进入 PLINK + KNN 分析管线。
+- 新增 `mock/` 输入数据和输入规范文档。
 
 ## 下一阶段
 

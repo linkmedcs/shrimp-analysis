@@ -100,9 +100,10 @@ def require_job(session: Session, job_id: str) -> IdentificationJob:
     status_code=status.HTTP_202_ACCEPTED,
 )
 async def create_job(
-    bed: UploadFile = File(...),
-    bim: UploadFile = File(...),
-    fam: UploadFile = File(...),
+    bed: UploadFile | None = File(None),
+    bim: UploadFile | None = File(None),
+    fam: UploadFile | None = File(None),
+    vcf: UploadFile | None = File(None),
     session: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> IdentificationJob:
@@ -112,24 +113,59 @@ async def create_job(
     upload_dir.mkdir(parents=True, exist_ok=False)
     settings.jobs_root.mkdir(parents=True, exist_ok=True)
 
+    has_plink = all(file is not None for file in (bed, bim, fam))
+    has_partial_plink = any(file is not None for file in (bed, bim, fam))
+    if vcf is not None and has_partial_plink:
+        shutil.rmtree(upload_dir, ignore_errors=True)
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Submit either one VCF/VCF.GZ file or all three BED/BIM/FAM files",
+        )
+    if vcf is None and not has_plink:
+        shutil.rmtree(upload_dir, ignore_errors=True)
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Submit either one VCF/VCF.GZ file or all three BED/BIM/FAM files",
+        )
+
     try:
-        input_files = {
-            "bed": await save_upload(
-                bed,
-                upload_dir / "query.bed",
-                settings.max_upload_bytes_per_file,
-            ),
-            "bim": await save_upload(
-                bim,
-                upload_dir / "query.bim",
-                settings.max_upload_bytes_per_file,
-            ),
-            "fam": await save_upload(
-                fam,
-                upload_dir / "query.fam",
-                settings.max_upload_bytes_per_file,
-            ),
-        }
+        if vcf is not None:
+            lower_name = (vcf.filename or "").lower()
+            if not (lower_name.endswith(".vcf") or lower_name.endswith(".vcf.gz")):
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="VCF input must end with .vcf or .vcf.gz",
+                )
+            stored_name = (
+                "query.vcf.gz" if lower_name.endswith(".vcf.gz") else "query.vcf"
+            )
+            input_files = {
+                "vcf": await save_upload(
+                    vcf,
+                    upload_dir / stored_name,
+                    settings.max_upload_bytes_per_file,
+                )
+            }
+            input_mode = "vcf"
+        else:
+            input_files = {
+                "bed": await save_upload(
+                    bed,
+                    upload_dir / "query.bed",
+                    settings.max_upload_bytes_per_file,
+                ),
+                "bim": await save_upload(
+                    bim,
+                    upload_dir / "query.bim",
+                    settings.max_upload_bytes_per_file,
+                ),
+                "fam": await save_upload(
+                    fam,
+                    upload_dir / "query.fam",
+                    settings.max_upload_bytes_per_file,
+                ),
+            }
+            input_mode = "plink"
         reference = load_reference_summary(settings.reference_manifest)
         job = IdentificationJob(
             id=job_id,
@@ -140,6 +176,7 @@ async def create_job(
             upload_dir=str(upload_dir),
             input_files=input_files,
         )
+        job.input_files = {"mode": input_mode, "files": input_files}
         session.add(job)
         session.commit()
         session.refresh(job)

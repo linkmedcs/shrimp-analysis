@@ -61,6 +61,16 @@ curl -X POST http://localhost:8000/api/jobs \
   -F "fam=@tests/fixtures/holdout_query.fam"
 ```
 
+也可以直接上传一个 VCF 或 VCF.GZ 文件：
+
+```bash
+curl -X POST http://localhost:8000/api/jobs \
+  -F "vcf=@mock/vcf/valid/query.vcf.gz"
+```
+
+两种方式必须二选一；完整的字段、格式和质量要求见
+[docs/input-requirements.md](input-requirements.md)。
+
 成功时返回 HTTP `202`，初始状态为 `queued`。Worker 开始处理后状态变为
 `running`，最终进入 `completed`、`rejected` 或 `failed`。
 

@@ -34,7 +34,15 @@ def run_identification_task(job_id: str) -> dict:
             "running",
             message="Running PLINK quality control and weighted KNN",
         )
-        query_prefix = Path(job.upload_dir) / "query"
+        input_mode = (job.input_files or {}).get("mode", "plink")
+        if input_mode == "vcf":
+            input_records = (job.input_files or {}).get("files", {})
+            vcf_name = input_records.get("vcf", {}).get("stored_name", "query.vcf")
+            query_vcf = Path(job.upload_dir) / vcf_name
+            query_prefix = None
+        else:
+            query_prefix = Path(job.upload_dir) / "query"
+            query_vcf = None
         job_dir = Path(job.job_dir)
 
     try:
@@ -42,6 +50,7 @@ def run_identification_task(job_id: str) -> dict:
             query_prefix,
             job_dir,
             settings.reference_manifest,
+            query_vcf=query_vcf,
             job_id=job_id,
         )
     except Exception as error:
@@ -72,4 +81,3 @@ def run_identification_task(job_id: str) -> dict:
             result_payload=result,
         )
     return result
-

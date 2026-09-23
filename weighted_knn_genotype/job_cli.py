@@ -42,6 +42,11 @@ def parse_job_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         type=Path,
         help="Directory containing query.bed/query.bim/query.fam.",
     )
+    source.add_argument(
+        "--query-vcf",
+        type=Path,
+        help="VCF or VCF.GZ query file; PLINK converts it before analysis.",
+    )
     destination = parser.add_mutually_exclusive_group()
     destination.add_argument("--job-dir", type=Path)
     destination.add_argument("--jobs-root", type=Path, default=Path("jobs"))
@@ -68,7 +73,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     try:
         args = parse_job_args(argv)
         job_id = args.job_id or generate_job_id()
-        query_prefix = args.query_prefix or (args.input_dir / "query")
+        query_prefix = args.query_prefix or (
+            args.input_dir / "query" if args.input_dir else None
+        )
         job_dir = args.job_dir or (args.jobs_root / job_id)
         config = JobConfig(
             knn=KNNConfig(
@@ -89,6 +96,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             job_dir,
             args.reference_manifest,
             config,
+            query_vcf=args.query_vcf,
             job_id=job_id,
         )
         print(f"Job directory: {job_dir.resolve()}")

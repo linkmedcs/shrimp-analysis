@@ -19,6 +19,7 @@ class JobResponse(BaseModel):
     application_version: str | None
     algorithm_version: str | None
     summary: dict[str, Any] | None
+    input_files: dict[str, Any]
     created_at: datetime
     updated_at: datetime
     queued_at: datetime | None
@@ -37,4 +38,3 @@ class HealthResponse(BaseModel):
     status: str
     database: str
     redis: str
-

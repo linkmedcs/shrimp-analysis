@@ -132,6 +132,9 @@ Job Runner 会自动完成输入复制和哈希、503 位点对齐、strand flip
 `result.json`、`quality_control.json`、`knn_assignments.csv` 和完整日志。
 
 详细输入、目录和输出契约见 [docs/job-runner.md](docs/job-runner.md)。
+支持的 PLINK/VCF 输入字段和质量要求见
+[docs/input-requirements.md](docs/input-requirements.md)；可复现测试数据见
+[mock/README.md](mock/README.md)。
 
 ## 异步鉴定 API
 

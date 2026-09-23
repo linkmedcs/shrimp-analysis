@@ -5,13 +5,27 @@
 
 ## 输入约定
 
-第一版只接受一个 PLINK binary dataset：
+当前支持以下两种输入：
+
+### PLINK binary dataset
 
 ```text
 query.bed
 query.bim
 query.fam
 ```
+
+### VCF 或 VCF.GZ
+
+```bash
+weighted-knn-genotype run-job \
+  --query-vcf path/to/query.vcf.gz \
+  --job-dir jobs/JOB-VCF \
+  --reference-manifest reference-data/panel-v1/manifest.json
+```
+
+VCF 会先由 Worker 内的 PLINK 1.9 转换为临时 binary dataset，再走完全相同的分析
+流程。完整输入要求见 [docs/input-requirements.md](input-requirements.md)。
 
 要求：
 

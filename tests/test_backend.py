@@ -69,6 +69,7 @@ class BackendApiTests(unittest.TestCase):
                     filename="sample.fam",
                     file=BytesIO(b"F Q1 0 0 0 -9\n"),
                 ),
+                vcf=None,
                 session=self.session,
                 settings=self.settings,
             )
@@ -83,6 +84,26 @@ class BackendApiTests(unittest.TestCase):
         route_paths = set(self.app.openapi()["paths"])
         self.assertIn("/api/jobs", route_paths)
         self.assertIn("/api/jobs/{job_id}/result", route_paths)
+
+    @patch("backend.api.routes.enqueue_identification")
+    def test_create_vcf_job(self, enqueue) -> None:
+        enqueue.return_value = SimpleNamespace(id="rq-vcf-test")
+        job = asyncio.run(
+            create_job(
+                bed=None,
+                bim=None,
+                fam=None,
+                vcf=UploadFile(filename="query.vcf.gz", file=BytesIO(b"vcf")),
+                session=self.session,
+                settings=self.settings,
+            )
+        )
+        self.assertEqual(job.status, "queued")
+        self.assertEqual(job.input_files["mode"], "vcf")
+        self.assertEqual(job.input_files["files"]["vcf"]["stored_name"], "query.vcf.gz")
+        self.assertTrue(
+            (self.settings.uploads_root / job.id / "query.vcf.gz").is_file()
+        )
 
 
 class BackendWorkerTests(unittest.TestCase):

@@ -82,6 +82,20 @@ def run_bfile(
     return run_command(command, log_path, check=check)
 
 
+def run_vcf_import(
+    vcf_path: Path,
+    output_prefix: Path,
+    runtime: PlinkRuntime,
+    log_path: Path,
+) -> subprocess.CompletedProcess[str]:
+    """Convert a VCF/VCF.GZ query into the PLINK binary format."""
+
+    command = [runtime.executable, "--vcf", str(vcf_path)]
+    command.extend(runtime.common_args())
+    command.extend(["--double-id", "--make-bed", "--out", str(output_prefix)])
+    return run_command(command, log_path)
+
+
 def run_merge(
     reference_prefix: Path,
     query_prefix: Path,

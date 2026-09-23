@@ -431,10 +431,40 @@ button {
   padding: 8px 12px;
 }
 
+.input-mode-toggle {
+  background: var(--surface-soft);
+  border-radius: 11px;
+  display: inline-flex;
+  gap: 3px;
+  margin-bottom: 18px;
+  padding: 3px;
+}
+
+.input-mode-toggle button {
+  background: transparent;
+  border-radius: 8px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 9px 14px;
+}
+
+.input-mode-toggle button.input-mode-toggle--active {
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(16, 46, 60, 0.08);
+  color: var(--ink);
+  font-weight: 700;
+}
+
 .file-grid {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(3, 1fr);
+}
+
+.file-grid--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 520px;
 }
 
 .file-input {
@@ -989,7 +1019,11 @@ button {
   .reference-strip > div:nth-child(n + 4) { border-top: 1px solid var(--line); }
   .file-grid { grid-template-columns: 1fr; }
   .workflow-grid { grid-template-columns: repeat(2, 1fr); }
-  .workflow-step:nth-child(3) { border-left: 0; }
+  .workflow-step:first-child,
+  .workflow-step:nth-child(3) {
+    border-left: 0;
+    padding-left: 0;
+  }
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
 }
 

@@ -34,6 +34,7 @@ from .plink_runtime import (
     read_sample_missingness,
     run_bfile,
     run_merge,
+    run_vcf_import,
 )
 from .reference import (
     load_reference_manifest,
@@ -157,6 +158,22 @@ def copy_query_dataset(source_prefix: Path, destination_prefix: Path) -> None:
         )
 
 
+def copy_query_vcf(source_vcf: Path, destination: Path) -> Path:
+    """Copy a VCF or VCF.GZ into the auditable job input directory."""
+
+    if not source_vcf.is_file():
+        raise FileNotFoundError(f"VCF input not found: {source_vcf}")
+    lower_name = source_vcf.name.lower()
+    if lower_name.endswith(".vcf.gz"):
+        destination = destination.with_suffix(".vcf.gz")
+    elif lower_name.endswith(".vcf"):
+        destination = destination.with_suffix(".vcf")
+    else:
+        raise ValueError("VCF input must end with .vcf or .vcf.gz")
+    shutil.copy2(source_vcf, destination)
+    return destination
+
+
 def reference_prefix_from_manifest(
     manifest_path: Path,
     manifest: Dict[str, object],
@@ -266,14 +283,20 @@ def merge_with_retry(
 
 
 def run_identification_job(
-    query_prefix: Path,
+    query_prefix: Path | None,
     job_dir: Path,
     reference_manifest: Path,
     config: JobConfig | None = None,
     *,
+    query_vcf: Path | None = None,
     job_id: str | None = None,
 ) -> Dict[str, object]:
-    """Run validation, PLINK merging, IBS, and weighted KNN for new samples."""
+    """Run validation, PLINK merging, IBS, and weighted KNN for new samples.
+
+    Exactly one query source is required: a PLINK prefix or a VCF/VCF.GZ file.
+    VCF inputs are converted to a temporary binary dataset by PLINK before the
+    normal marker alignment and identification pipeline begins.
+    """
 
     config = config or JobConfig()
     config.validate()
@@ -284,12 +307,14 @@ def run_identification_job(
     result_path = paths["output"] / "result.json"
     qc_path = paths["output"] / "quality_control.json"
     log_path = paths["logs"] / "analysis.log"
+    if (query_prefix is None) == (query_vcf is None):
+        raise ValueError("Provide exactly one of query_prefix or query_vcf")
     write_status(
         status_path,
         job_id,
         "validating",
         created_at=created_at,
-        message="Validating query PLINK files",
+        message="Validating query input",
     )
 
     qc: Dict[str, object] = {}
@@ -301,16 +326,35 @@ def run_identification_job(
         reference_version = str(manifest["reference_version"])
         reference_prefix = reference_prefix_from_manifest(reference_manifest, manifest)
         metadata_path = reference_file_path(reference_manifest, manifest, "metadata")
-        copied_query_prefix = paths["input"] / "query"
-        copy_query_dataset(query_prefix, copied_query_prefix)
+        autosome_count = config.autosome_count
+        if autosome_count is None:
+            autosome_count = int(manifest.get("plink", {}).get("autosome_count", 45))
+        runtime = PlinkRuntime(
+            executable=config.plink_executable,
+            autosome_count=autosome_count,
+            allow_extra_chr=config.allow_extra_chr,
+        )
 
-        input_files = {
-            suffix.lstrip("."): {
-                "path": f"input/query{suffix}",
-                "sha256": sha256_file(Path(f"{copied_query_prefix}{suffix}")),
+        if query_vcf is not None:
+            copied_vcf = copy_query_vcf(query_vcf, paths["input"] / "query")
+            input_files = {
+                "vcf": {
+                    "path": f"input/{copied_vcf.name}",
+                    "sha256": sha256_file(copied_vcf),
+                }
             }
-            for suffix in (".bed", ".bim", ".fam")
-        }
+            copied_query_prefix = paths["work"] / "query_from_vcf"
+            run_vcf_import(copied_vcf, copied_query_prefix, runtime, log_path)
+        else:
+            copied_query_prefix = paths["input"] / "query"
+            copy_query_dataset(query_prefix, copied_query_prefix)
+            input_files = {
+                suffix.lstrip("."): {
+                    "path": f"input/query{suffix}",
+                    "sha256": sha256_file(Path(f"{copied_query_prefix}{suffix}")),
+                }
+                for suffix in (".bed", ".bim", ".fam")
+            }
 
         query_samples = read_fam(Path(f"{copied_query_prefix}.fam"))
         if len(query_samples) > config.max_query_samples:
@@ -370,15 +414,6 @@ def run_identification_job(
                     "reference_marker_count": alignment.reference_marker_count,
                 },
             )
-
-        autosome_count = config.autosome_count
-        if autosome_count is None:
-            autosome_count = int(manifest.get("plink", {}).get("autosome_count", 45))
-        runtime = PlinkRuntime(
-            executable=config.plink_executable,
-            autosome_count=autosome_count,
-            allow_extra_chr=config.allow_extra_chr,
-        )
 
         marker_file = paths["work"] / "compatible_markers.txt"
         flip_file = paths["work"] / "strand_flip_markers.txt"

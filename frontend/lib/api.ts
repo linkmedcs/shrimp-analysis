@@ -23,6 +23,7 @@ export interface JobRecord {
   application_version: string | null;
   algorithm_version: string | null;
   summary: JobSummary | null;
+  input_files: Record<string, unknown>;
   created_at: string;
   updated_at: string;
   queued_at: string | null;

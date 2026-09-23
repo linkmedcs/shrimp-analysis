@@ -13,8 +13,8 @@ export default function Home() {
             <em>都有清晰的分子身份</em>
           </h1>
           <p>
-            上传 PLINK 基因型文件，通过冻结的 503 位点参考库、IBS 遗传距离和
-            加权 K 近邻模型完成可追溯的种质鉴定。
+            上传 VCF 基因型文件（也支持 PLINK 三文件），通过冻结的 503 位点参考库、
+            IBS 遗传距离和加权 K 近邻模型完成可追溯的种质鉴定。
           </p>
           <div className="hero__actions">
             <a className="primary-button" href="#identify">

@@ -107,6 +107,26 @@ class JobRunnerTests(unittest.TestCase):
             self.assertEqual(result["summary"]["final_marker_count"], 503)
             self.assertEqual(result["summary"]["assigned_samples"], 3)
 
+    @unittest.skipUnless(shutil.which("plink"), "PLINK 1.9 is not installed")
+    def test_vcf_query_end_to_end(self) -> None:
+        from weighted_knn_genotype.job_runner import run_identification_job
+
+        expected = {"Q_GT": "GT", "Q_ZD": "ZD", "Q_KONA": "KONA"}
+        with tempfile.TemporaryDirectory() as temporary:
+            result = run_identification_job(
+                None,
+                Path(temporary) / "job",
+                REFERENCE_MANIFEST,
+                query_vcf=ROOT / "mock" / "vcf" / "valid" / "query.vcf.gz",
+                job_id="JOB-VCF-HOLDOUT-TEST",
+            )
+            self.assertEqual(result["status"], "completed")
+            predictions = {
+                row["ID"]: row["predicted_label"] for row in result["assignments"]
+            }
+            self.assertEqual(predictions, expected)
+            self.assertEqual(result["summary"]["final_marker_count"], 503)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>LV 对虾种质数据库</title>
+  <rect width="64" height="64" rx="16" fill="#102e3c"/>
+  <g fill="none" stroke="#c1e875" stroke-linecap="round" stroke-linejoin="round">
+    <!-- curved shrimp body -->
+    <path d="M19 25c7-6 19-6 26 2 5 6 2 15-6 19-8 4-16 1-19-6-3-6-4-11-1-15Z" stroke-width="3.2"/>
+    <!-- tail fan -->
+    <path d="M45 29 56 24l-5 10 6 9-12-4" stroke-width="2.8"/>
+    <!-- shell segments -->
+    <path d="M26 22c-2 7-1 17 4 24M33 20c-2 8-1 20 3 27M40 22c-2 7 0 16 4 22" stroke-width="1.8" opacity=".9"/>
+    <!-- antennae -->
+    <path d="M20 27 10 14 6 13M20 29 8 22 5 23" stroke="#f7fbf4" stroke-width="2"/>
+    <!-- legs -->
+    <path d="M24 40 18 49M29 44l-4 9M35 45l1 8M40 43l6 7" stroke-width="2"/>
+  </g>
+  <circle cx="19" cy="27" r="2.2" fill="#f7fbf4"/>
+  <circle cx="19" cy="27" r=".9" fill="#102e3c"/>
+</svg>
