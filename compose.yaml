@@ -92,7 +92,7 @@ services:
         API_PROXY_URL: http://api:8000
     image: shrimp-web:0.1.0
     ports:
-      - "3000:3000"
+      - "80:3000"
     depends_on:
       api:
         condition: service_started
