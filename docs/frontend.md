@@ -63,6 +63,14 @@ API Docs http://localhost:8000/docs
 `3000`，服务器是 `80`。如需自定义端口，可以在执行前设置
 `SHRIMP_WEB_PORT`，例如 `SHRIMP_WEB_PORT=8080 ./scripts/start-server.sh`。
 
+本地和服务器均使用以下命令一键停止全部服务：
+
+```bash
+./scripts/stop-stack.sh
+```
+
+该操作保留 PostgreSQL、Redis、上传文件和任务结果数据卷。
+
 浏览器只访问 Next.js 的 `/api/*` 同源地址。Next.js 根据 `API_PROXY_URL` 将请求代理
 到 Compose 网络中的 `http://api:8000`，因此不需要在 FastAPI 开放通配 CORS。
 

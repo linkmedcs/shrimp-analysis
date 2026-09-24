@@ -158,6 +158,12 @@ curl http://localhost:8000/api/health
 两个入口共用 `scripts/start-stack.sh` 和同一个 `compose.yaml`。本地默认将 Web
 映射到 3000 端口，服务器默认映射到 80 端口；可通过 `SHRIMP_WEB_PORT` 覆盖。
 
+本地和服务器使用同一个脚本停止完整服务，并保留数据库与任务数据卷：
+
+```bash
+./scripts/stop-stack.sh
+```
+
 上传一个 PLINK binary dataset：
 
 ```bash

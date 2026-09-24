@@ -49,7 +49,7 @@ curl http://localhost:8000/api/health
 停止服务但保留 PostgreSQL、Redis 和任务卷：
 
 ```bash
-docker compose down
+./scripts/stop-stack.sh
 ```
 
 只有明确需要删除全部本地数据时才运行 `docker compose down -v`。
