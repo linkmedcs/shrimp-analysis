@@ -1,7 +1,8 @@
-# Panel V1 种质清单
+# Panel V1 种质标签清单
 
-根据冻结参考库 `panel-v1` 的 `reference.fam` 与 `labels.tsv` 交集整理，
-共 23 个实际参与种质鉴定的标签。
+`labels.tsv` 中共出现 24 个非空种质标签。当前冻结参考基因型文件
+`reference.fam` 实际覆盖其中 23 个；`LCHL` 只有元数据记录，没有对应的参考
+基因型样本，因此当前加权 KNN 不会预测出 `LCHL`。
 
 | 种质标签 |
 |---|
@@ -20,6 +21,7 @@
 | KONA |
 | KYTY |
 | Kona-Bay |
+| LCHL |
 | MEX |
 | PRIMOR |
 | RYK |
