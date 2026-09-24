@@ -29,10 +29,12 @@ RQ Worker
 ## 启动
 
 ```bash
-docker compose up --build -d
+./scripts/start-local.sh
 docker compose ps
 curl http://localhost:8000/api/health
 ```
+
+服务器使用 `./scripts/start-server.sh`；两个脚本共用同一个 Compose 配置和构建流程。
 
 正常健康检查：
 

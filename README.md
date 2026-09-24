@@ -145,9 +145,18 @@ Job Runner 会自动完成输入复制和哈希、503 位点对齐、strand flip
 启动完整开发环境：
 
 ```bash
-docker compose up --build -d
+./scripts/start-local.sh
 curl http://localhost:8000/api/health
 ```
+
+服务器首次构建或重新启动完整服务：
+
+```bash
+./scripts/start-server.sh
+```
+
+两个入口共用 `scripts/start-stack.sh` 和同一个 `compose.yaml`。本地默认将 Web
+映射到 3000 端口，服务器默认映射到 80 端口；可通过 `SHRIMP_WEB_PORT` 覆盖。
 
 上传一个 PLINK binary dataset：
 

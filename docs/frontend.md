@@ -39,10 +39,10 @@ API_PROXY_URL=http://localhost:8000 npm run dev
 
 ## Docker Compose
 
-启动完整系统：
+本地一键启动完整系统：
 
 ```bash
-docker compose up --build -d
+./scripts/start-local.sh
 ```
 
 服务地址：
@@ -52,6 +52,16 @@ Web      http://localhost:3000
 API      http://localhost:8000
 API Docs http://localhost:8000/docs
 ```
+
+服务器一键启动：
+
+```bash
+./scripts/start-server.sh
+```
+
+本地和服务器共用 `scripts/start-stack.sh`。区别仅为默认 Web 端口：本地是
+`3000`，服务器是 `80`。如需自定义端口，可以在执行前设置
+`SHRIMP_WEB_PORT`，例如 `SHRIMP_WEB_PORT=8080 ./scripts/start-server.sh`。
 
 浏览器只访问 Next.js 的 `/api/*` 同源地址。Next.js 根据 `API_PROXY_URL` 将请求代理
 到 Compose 网络中的 `http://api:8000`，因此不需要在 FastAPI 开放通配 CORS。
