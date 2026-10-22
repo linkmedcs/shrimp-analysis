@@ -34,6 +34,7 @@ export interface JobRecord {
 export interface Assignment {
   ID: string;
   predicted_label: string | null;
+  predicted_name?: string | null;
   status: string;
   known_neighbor_count: number;
   score_ratio: number | null;

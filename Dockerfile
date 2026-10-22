@@ -40,6 +40,7 @@ LABEL org.opencontainers.image.description="FastAPI task API for shrimp germplas
 
 RUN mkdir -p /app/reference-data/panel-v1
 COPY reference-data/panel-v1/manifest.json /app/reference-data/panel-v1/manifest.json
+COPY reference-data/germplasm-name-map.json /app/reference-data/germplasm-name-map.json
 
 USER app
 

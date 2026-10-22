@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     reference_manifest: Path = Path(
         "/app/reference-data/panel-v1/manifest.json"
     )
+    germplasm_name_map: Path = (
+        Path(__file__).resolve().parents[1]
+        / "reference-data"
+        / "germplasm-name-map.json"
+    )
     max_upload_bytes_per_file: int = 100 * 1024 * 1024
     job_timeout_seconds: int = 60 * 60
     result_ttl_seconds: int = 7 * 24 * 60 * 60
@@ -35,4 +40,3 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()
-

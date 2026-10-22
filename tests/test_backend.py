@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import asyncio
+import json
 from io import BytesIO
 import tempfile
 import unittest
@@ -15,7 +16,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from backend.config import Settings, get_settings
-from backend.api.routes import create_job, read_job
+from backend.api.routes import create_job, read_job, read_job_result
 from backend.database import Base, get_db, reset_database_caches
 from backend.main import create_app
 from backend.models import IdentificationJob
@@ -103,6 +104,39 @@ class BackendApiTests(unittest.TestCase):
         self.assertEqual(job.input_files["files"]["vcf"]["stored_name"], "query.vcf.gz")
         self.assertTrue(
             (self.settings.uploads_root / job.id / "query.vcf.gz").is_file()
+        )
+
+    @patch("backend.api.routes.require_job")
+    def test_result_resolves_names_without_changing_stored_labels(self, require) -> None:
+        payload = {
+            "status": "completed",
+            "assignments": [
+                {"ID": f"Q{index}", "predicted_label": label}
+                for index, label in enumerate(("BH", "bohai", "HJ", "LCHL", "NEW", None))
+            ],
+        }
+        require.return_value = SimpleNamespace(result_payload=payload)
+        response = read_job_result("existing-job", self.session, self.settings)
+        assignments = json.loads(response.body)["assignments"]
+        self.assertEqual(
+            [row["predicted_name"] for row in assignments],
+            ["渤海1号", "渤海1号", "HJ", "LCHL", "NEW", None],
+        )
+        self.assertEqual(
+            [row["predicted_label"] for row in assignments],
+            [row["predicted_label"] for row in payload["assignments"]],
+        )
+        self.assertTrue(all("predicted_name" not in row for row in payload["assignments"]))
+
+    @patch("backend.api.routes.require_job")
+    def test_result_falls_back_when_mapping_file_is_missing(self, require) -> None:
+        self.settings.germplasm_name_map = self.root / "missing.json"
+        require.return_value = SimpleNamespace(
+            result_payload={"assignments": [{"predicted_label": "BH"}]}
+        )
+        response = read_job_result("existing-job", self.session, self.settings)
+        self.assertEqual(
+            json.loads(response.body)["assignments"][0]["predicted_name"], "BH"
         )
 
 

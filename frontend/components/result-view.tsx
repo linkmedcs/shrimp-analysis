@@ -66,7 +66,7 @@ export function ResultView({
                   <td className="sample-id">{assignment.ID}</td>
                   <td>
                     <strong className="prediction-chip">
-                      {assignment.predicted_label ?? "未分配"}
+                      {assignment.predicted_name ?? assignment.predicted_label ?? "未分配"}
                     </strong>
                   </td>
                   <td>{assignment.known_neighbor_count}</td>

@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from backend.config import Settings, get_settings
 from backend.database import get_db
+from backend.germplasm import add_germplasm_names, load_germplasm_names
 from backend.models import IdentificationJob
 from backend.queue import enqueue_identification, get_redis_connection
 from backend.repository import get_job, set_job_status
@@ -218,14 +219,25 @@ def read_job(job_id: str, session: Session = Depends(get_db)) -> IdentificationJ
 
 
 @router.get("/jobs/{job_id}/result")
-def read_job_result(job_id: str, session: Session = Depends(get_db)):
+def read_job_result(
+    job_id: str,
+    session: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+):
     job = require_job(session, job_id)
     if job.result_payload is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={"job_id": job_id, "status": job.status},
         )
-    return JSONResponse(content=job.result_payload)
+    try:
+        names = load_germplasm_names(settings.germplasm_name_map)
+    except (OSError, ValueError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Germplasm name map is unavailable or invalid",
+        ) from error
+    return JSONResponse(content=add_germplasm_names(job.result_payload, names))
 
 
 @router.get("/jobs/{job_id}/files", response_model=list[FileResponse])

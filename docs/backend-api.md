@@ -90,6 +90,35 @@ GET  /api/health
 
 `GET /api/jobs/{job_id}/result` 在任务尚未产生结果时返回 HTTP `409`。
 
+### 种质中文名称
+
+名称对照表位于 `reference-data/germplasm-name-map.json`，来源为“种质的关系.xlsx”
+的 Sheet1。文件是原始标签到中文名称的 JSON 对象，Excel 中没有名称的 `HJ`、
+`LCHL` 不写入映射。
+
+结果接口在每条 assignment 中保留 `predicted_label`，并返回 `predicted_name`：
+有映射时为中文名，没有映射时为原始标签，未分配时为 null。前端直接展示该字段。
+例如 `{"predicted_label": "BH", "predicted_name": "渤海1号"}`。
+同一中文名对应的不同标签仍然独立参与 KNN；类别数量和模型计算不变。
+
+API 每次读取结果时加载映射，因此已有任务也能显示最新名称。文件缺失时使用
+原始标签；文件格式无效时接口返回 HTTP `503`。数据库及可下载的原始 JSON/CSV
+审计文件保留计算时的原始标签，不因展示名称调整而重写。
+
+服务器仓库位于 `/home/ubuntu/shrimp-analysis` 时，映射文件对应
+`/home/ubuntu/shrimp-analysis/reference-data/germplasm-name-map.json`。
+Compose 将它只读挂载到 API 容器，独立 API 镜像也内置该文件。
+非 Docker 环境默认读取项目中的该文件，可通过 `SHRIMP_GERMPLASM_NAME_MAP`
+指定其他路径。该文件位于冻结的 `panel-v1` 之外，不改变参考库校验值。
+
+服务器首次更新需重新构建 API 和前端，并保持 Web 的 80 端口：
+
+```bash
+SHRIMP_WEB_PORT=80 docker compose up -d --build api frontend
+```
+
+之后仅修改映射内容时，Compose 部署无需重新构建镜像。
+
 可下载文件键：
 
 ```text

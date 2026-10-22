@@ -7,6 +7,7 @@ x-backend-environment: &backend-environment
   SHRIMP_JOBS_ROOT: /data/jobs
   SHRIMP_UPLOADS_ROOT: /data/uploads
   SHRIMP_REFERENCE_MANIFEST: /app/reference-data/panel-v1/manifest.json
+  SHRIMP_GERMPLASM_NAME_MAP: /app/reference-data/germplasm-name-map.json
 
 services:
   postgres:
@@ -58,6 +59,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - ./reference-data/germplasm-name-map.json:/app/reference-data/germplasm-name-map.json:ro
       - jobs-data:/data/jobs
       - uploads-data:/data/uploads
     depends_on:
